@@ -68,7 +68,7 @@ sudo pacman -Sy prune_backups</pre>
 
 <h2>Alpine</h2>
 <pre>sudo curl -fsSL -o /etc/apk/keys/acmelab.rsa.pub https://pkg.acmelab.de/alpine/acmelab.rsa.pub
-echo "https://pkg.acmelab.de/apk/$(uname -m)" | sudo tee -a /etc/apk/repositories
+echo "https://pkg.acmelab.de/apk" | sudo tee -a /etc/apk/repositories
 sudo apk update && sudo apk add prune_backups</pre>
 
 <p class="muted">Source, build scripts and signing rationale:
