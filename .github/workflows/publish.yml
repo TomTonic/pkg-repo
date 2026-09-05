@@ -1,0 +1,85 @@
+name: Publish package repository
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *' # hourly safety net, offset from the top of the hour
+  repository_dispatch:
+    types: [refresh]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq apt-utils createrepo-c gnupg2 jq
+
+      - name: Import signing keys
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          ALPINE_RSA_PRIVATE_KEY: ${{ secrets.ALPINE_RSA_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          printf '%s\n' "$ALPINE_RSA_PRIVATE_KEY" > /tmp/acmelab.rsa
+          chmod 600 /tmp/acmelab.rsa
+
+      - name: Fetch tool releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/fetch-releases.sh work
+
+      - name: Build apt index
+        run: ./scripts/build-apt.sh work _site
+
+      - name: Build rpm index
+        run: ./scripts/build-rpm.sh work _site
+
+      - name: Export GPG private key for the pacman container build
+        run: gpg --batch --yes --armor --export-secret-keys -o /tmp/gpg-private-key.asc
+
+      - name: Build pacman index
+        run: ./scripts/build-pacman.sh work _site /tmp/gpg-private-key.asc
+
+      - name: Build apk index
+        run: ./scripts/build-apk.sh work _site /tmp/acmelab.rsa
+
+      - name: Assemble site
+        run: ./scripts/assemble-site.sh _site
+
+      - name: Clean up key material from disk
+        if: always()
+        run: |
+          rm -f /tmp/gpg-private-key.asc /tmp/acmelab.rsa
+          gpgconf --kill all || true
+          rm -rf ~/.gnupg
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
