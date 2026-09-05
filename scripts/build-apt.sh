@@ -4,6 +4,11 @@ set -euo pipefail
 
 WORK="${1:?usage: build-apt.sh <workdir> <sitedir>}"
 SITE="${2:?usage: build-apt.sh <workdir> <sitedir>}"
+# Resolve to absolute paths up front: the block below cd's around, and a
+# relative $WORK would otherwise be looked up relative to the wrong dir.
+WORK="$(cd "$WORK" && pwd)"
+mkdir -p "$SITE"
+SITE="$(cd "$SITE" && pwd)"
 
 mkdir -p "$SITE/apt/pool" \
   "$SITE/apt/dists/stable/main/binary-amd64" \
