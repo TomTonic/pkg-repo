@@ -1,0 +1,5 @@
+{
+  "tools": [
+    { "repo": "TomTonic/prune_backups", "package": "prune_backups" }
+  ]
+}

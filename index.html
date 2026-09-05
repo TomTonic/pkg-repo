@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>acmelab package repository</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1a1a1a; --muted: #5a5a5a; --border: #ddd;
+    --code-bg: #f4f4f4; --link: #0a58ca;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161a; --fg: #e8e8e8; --muted: #9a9a9a; --border: #333; --code-bg: #1e2126; --link: #6ea8ff; }
+  }
+  body { background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 780px; margin: 3rem auto; padding: 0 1.5rem; line-height: 1.55; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  a { color: var(--link); }
+  code, pre { background: var(--code-bg); border-radius: 4px; }
+  code { padding: .1rem .3rem; }
+  pre { padding: .8rem 1rem; overflow-x: auto; }
+  .muted { color: var(--muted); font-size: .92rem; }
+  .fingerprint { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; word-break: break-all; }
+</style>
+</head>
+<body>
+<h1>acmelab package repository</h1>
+<p>Signed <code>apt</code>/<code>dnf</code>/<code>zypper</code>/<code>pacman</code>/<code>apk</code> repository
+for the <a href="https://github.com/TomTonic">acmelab / TomTonic</a> command-line tools.</p>
+
+<p class="muted">This page and the package indices below are rebuilt automatically by a
+<a href="https://github.com/TomTonic/pkg-repo/actions">GitHub Actions workflow</a> in
+<a href="https://github.com/TomTonic/pkg-repo">TomTonic/pkg-repo</a>, pulling signed release
+assets directly from each tool's own GitHub repository. Nothing here is hand-uploaded.</p>
+
+<h2>Currently served tools</h2>
+<ul>
+  <li><a href="https://github.com/TomTonic/prune_backups">prune_backups</a> &mdash;
+      prune incremental backup directories on a retention schedule</li>
+</ul>
+
+<h2>Signing keys</h2>
+<p>apt/rpm/pacman are all signed with the same GPG key; apk uses Alpine's own RSA key format.</p>
+<p class="fingerprint">GPG: 284B 3557 CDC4 4D25 509D&nbsp;&nbsp;A0A3 B9C0 61B9 627E 9BB0</p>
+<ul>
+  <li><a href="pubkey.gpg">pubkey.gpg</a> (apt/rpm/pacman)</li>
+  <li><a href="alpine/acmelab.rsa.pub">alpine/acmelab.rsa.pub</a> (apk)</li>
+</ul>
+
+<h2>Debian / Ubuntu and derivatives</h2>
+<pre>curl -fsSL https://pkg.acmelab.de/pubkey.gpg | sudo tee /etc/apt/keyrings/acmelab.asc
+echo "deb [signed-by=/etc/apt/keyrings/acmelab.asc] https://pkg.acmelab.de/apt stable main" | \
+  sudo tee /etc/apt/sources.list.d/acmelab.list
+sudo apt update && sudo apt install prune_backups</pre>
+
+<h2>Fedora / RHEL / CentOS / Rocky / Alma / openSUSE</h2>
+<pre>sudo curl -fsSL -o /etc/yum.repos.d/acmelab.repo https://pkg.acmelab.de/rpm/acmelab.repo
+sudo dnf install prune_backups   # or: sudo zypper install prune_backups</pre>
+
+<h2>Arch Linux and derivatives</h2>
+<pre># add to /etc/pacman.conf:
+#   [acmelab]
+#   SigLevel = Optional TrustedOnly DatabaseRequired
+#   Server = https://pkg.acmelab.de/pacman/$arch
+curl -fsSL https://pkg.acmelab.de/pubkey.gpg | sudo pacman-key --add -
+sudo pacman-key --lsign-key 284B3557CDC44D25509DA0A3B9C061B9627E9BB0
+sudo pacman -Sy prune_backups</pre>
+
+<h2>Alpine</h2>
+<pre>sudo curl -fsSL -o /etc/apk/keys/acmelab.rsa.pub https://pkg.acmelab.de/alpine/acmelab.rsa.pub
+echo "https://pkg.acmelab.de/apk/$(uname -m)" | sudo tee -a /etc/apk/repositories
+sudo apk update && sudo apk add prune_backups</pre>
+
+<p class="muted">Source, build scripts and signing rationale:
+<a href="https://github.com/TomTonic/pkg-repo">github.com/TomTonic/pkg-repo</a></p>
+</body>
+</html>
