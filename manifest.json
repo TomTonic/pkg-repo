@@ -1,5 +1,6 @@
 {
   "tools": [
-    { "repo": "TomTonic/prune_backups", "package": "prune_backups" }
+    { "repo": "TomTonic/prune_backups", "package": "prune_backups" },
+    { "repo": "TomTonic/extract-sbom", "package": "extract-sbom" }
   ]
 }
