@@ -36,10 +36,10 @@ for dir in /work-pacman/*/; do
   cd "$dir"
   pkgs=(*.pkg.tar.zst)
   [ ${#pkgs[@]} -eq 0 ] && continue
-  repo-add acmelab.db.tar.zst "${pkgs[@]}"
-  gpg --batch --yes --detach-sign acmelab.db.tar.zst
+  repo-add tomtonic.db.tar.zst "${pkgs[@]}"
+  gpg --batch --yes --detach-sign tomtonic.db.tar.zst
   # pacman fetches "<reponame>.db.sig", not "<reponame>.db.tar.zst.sig"
-  ln -sf acmelab.db.tar.zst.sig acmelab.db.sig
+  ln -sf tomtonic.db.tar.zst.sig tomtonic.db.sig
 done
 '
 

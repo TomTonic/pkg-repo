@@ -42,8 +42,8 @@ jobs:
           ALPINE_RSA_PRIVATE_KEY: ${{ secrets.ALPINE_RSA_PRIVATE_KEY }}
         run: |
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          printf '%s\n' "$ALPINE_RSA_PRIVATE_KEY" > /tmp/acmelab.rsa
-          chmod 600 /tmp/acmelab.rsa
+          printf '%s\n' "$ALPINE_RSA_PRIVATE_KEY" > /tmp/tomtonic.rsa
+          chmod 600 /tmp/tomtonic.rsa
 
       - name: Fetch tool releases
         env:
@@ -63,7 +63,7 @@ jobs:
         run: ./scripts/build-pacman.sh work _site /tmp/gpg-private-key.asc
 
       - name: Build apk index
-        run: ./scripts/build-apk.sh work _site /tmp/acmelab.rsa
+        run: ./scripts/build-apk.sh work _site /tmp/tomtonic.rsa
 
       - name: Assemble site
         run: ./scripts/assemble-site.sh _site
@@ -71,7 +71,7 @@ jobs:
       - name: Clean up key material from disk
         if: always()
         run: |
-          rm -f /tmp/gpg-private-key.asc /tmp/acmelab.rsa
+          rm -f /tmp/gpg-private-key.asc /tmp/tomtonic.rsa
           gpgconf --kill all || true
           rm -rf ~/.gnupg
 

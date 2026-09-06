@@ -20,7 +20,7 @@ shopt -u nullglob
 docker rm -f apk-build >/dev/null 2>&1 || true
 docker run -d --name apk-build alpine:latest sleep infinity
 docker cp "$SITE/apk" apk-build:/work-apk
-docker cp "$RSA_KEY_FILE" apk-build:/acmelab.rsa
+docker cp "$RSA_KEY_FILE" apk-build:/tomtonic.rsa
 
 docker exec apk-build sh -c '
 set -e
@@ -33,7 +33,7 @@ for dir in /work-apk/*/; do
   # --allow-untrusted: we deliberately do not sign individual .apk files,
   # only the index below (same reasoning as the rpm repodata signature).
   apk index --allow-untrusted -o APKINDEX.tar.gz -- *.apk
-  abuild-sign -k /acmelab.rsa APKINDEX.tar.gz
+  abuild-sign -k /tomtonic.rsa APKINDEX.tar.gz
 done
 '
 

@@ -20,8 +20,8 @@ cp "$WORK"/pools/apt/arm64/*.deb "$SITE/apt/pool/" 2>/dev/null || true
 shopt -u nullglob
 
 cat >"$WORK/apt-ftparchive.conf" <<'EOF'
-APT::FTPArchive::Release::Origin "acmelab";
-APT::FTPArchive::Release::Label "acmelab package repository";
+APT::FTPArchive::Release::Origin "tomtonic";
+APT::FTPArchive::Release::Label "TomTonic package repository";
 APT::FTPArchive::Release::Suite "stable";
 APT::FTPArchive::Release::Codename "stable";
 APT::FTPArchive::Release::Components "main";

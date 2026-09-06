@@ -19,12 +19,12 @@ createrepo_c "$SITE/rpm"
 gpg --batch --yes --detach-sign --armor \
   -o "$SITE/rpm/repodata/repomd.xml.asc" "$SITE/rpm/repodata/repomd.xml"
 
-cat >"$SITE/rpm/acmelab.repo" <<'EOF'
-[acmelab]
-name=acmelab package repository
-baseurl=https://pkg.acmelab.de/rpm
+cat >"$SITE/rpm/tomtonic.repo" <<'EOF'
+[tomtonic]
+name=TomTonic package repository
+baseurl=https://pkg.tomtonic.de/rpm
 enabled=1
 gpgcheck=0
 repo_gpgcheck=1
-gpgkey=https://pkg.acmelab.de/pubkey.gpg
+gpgkey=https://pkg.tomtonic.de/pubkey.gpg
 EOF

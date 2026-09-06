@@ -1,10 +1,10 @@
-# acmelab package repository
+# TomTonic package repository
 
 Signed `apt`/`dnf`/`zypper`/`pacman`/`apk` repository, served at
-[pkg.acmelab.de](https://pkg.acmelab.de), aggregating packages from
+[pkg.tomtonic.de](https://pkg.tomtonic.de), aggregating packages from
 multiple independent tool repositories (see `manifest.json`).
 
-See [pkg.acmelab.de](https://pkg.acmelab.de) for end-user install
+See [pkg.tomtonic.de](https://pkg.tomtonic.de) for end-user install
 instructions.
 
 ## How it works
@@ -45,20 +45,27 @@ no *offline* way to verify it standalone. The same is already true for
 a weakness specific to rpm/pacman, it's consistent across all four
 formats.
 
+## Identity, succession and portability
+
+- [IDENTITY.md](IDENTITY.md) - which identity appears where, and why the
+  brand is `tomtonic`.
+- [SUCCESSION.md](SUCCESSION.md) - key custody, handover and key rotation
+  procedures, and what it would take to move off GitHub.
+
 ## Key custody
 
 The two signing keys (GPG for apt/rpm/pacman, a separate RSA key in
 Alpine's own format for apk) are what make this repository portable off
 GitHub if that's ever needed - as long as the *same* keys keep signing the
 index, no end user ever has to re-trust anything, only the DNS target
-(`pkg.acmelab.de`) would need to change. Because GitHub Actions secrets
+(`pkg.tomtonic.de`) would need to change. Because GitHub Actions secrets
 are write-only, both private keys are also kept outside GitHub (the
 maintainer's personal password safe), not solely as repository secrets.
 
 ## Signing keys
 
 - GPG (apt/rpm/pacman): fingerprint
-  `284B 3557 CDC4 4D25 509D A0A3 B9C0 61B9 627E 9BB0`, public key at
+  `AA9C 6D63 B7B6 C0BC 18A8 9693 E372 5F71 EDDA EC03`, public key at
   [`pubkey.gpg`](pubkey.gpg).
 - Alpine RSA (apk): public key at
-  [`alpine/acmelab.rsa.pub`](alpine/acmelab.rsa.pub).
+  [`alpine/tomtonic.rsa.pub`](alpine/tomtonic.rsa.pub).
