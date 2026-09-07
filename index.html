@@ -2,78 +2,445 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>TomTonic package repository</title>
+<title>TomTonic Package Repository</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Signed apt/dnf/zypper/pacman/apk repository for the TomTonic command-line tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #ffffff; --fg: #1a1a1a; --muted: #5a5a5a; --border: #ddd;
-    --code-bg: #f4f4f4; --link: #0a58ca;
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --ink: #20242b;
+    --muted: #656d78;
+    --border: #e2ddd0;
+    --border-strong: #cfc8b8;
+    --accent: #2b6e63;
+    --accent-ink: #17423b;
+    --accent-soft: #e4efec;
+    --code-bg: #1c2521;
+    --code-fg: #ecf3f0;
+    --code-muted: #7fa89e;
+    --shadow: 0 1px 2px rgba(32, 36, 43, .05), 0 8px 24px -12px rgba(32, 36, 43, .12);
+    --focus: #2b6e63;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #14161a; --fg: #e8e8e8; --muted: #9a9a9a; --border: #333; --code-bg: #1e2126; --link: #6ea8ff; }
+    :root:not([data-theme="light"]) {
+      --bg: #14171a;
+      --surface: #1b1f24;
+      --ink: #e9e6de;
+      --muted: #9aa3ab;
+      --border: #2a2f35;
+      --border-strong: #3a4149;
+      --accent: #5fbfae;
+      --accent-ink: #bfe9df;
+      --accent-soft: #1e2f2c;
+      --code-bg: #101614;
+      --code-fg: #dfeae6;
+      --code-muted: #6f9c90;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -14px rgba(0, 0, 0, .55);
+      --focus: #5fbfae;
+    }
   }
-  body { background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 780px; margin: 3rem auto; padding: 0 1.5rem; line-height: 1.55; }
-  h1 { font-size: 1.6rem; }
-  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
-  a { color: var(--link); }
-  code, pre { background: var(--code-bg); border-radius: 4px; }
-  code { padding: .1rem .3rem; }
-  pre { padding: .8rem 1rem; overflow-x: auto; }
-  .muted { color: var(--muted); font-size: .92rem; }
-  .fingerprint { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; word-break: break-all; }
+  :root[data-theme="dark"] {
+    --bg: #14171a;
+    --surface: #1b1f24;
+    --ink: #e9e6de;
+    --muted: #9aa3ab;
+    --border: #2a2f35;
+    --border-strong: #3a4149;
+    --accent: #5fbfae;
+    --accent-ink: #bfe9df;
+    --accent-soft: #1e2f2c;
+    --code-bg: #101614;
+    --code-fg: #dfeae6;
+    --code-muted: #6f9c90;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -14px rgba(0, 0, 0, .55);
+    --focus: #5fbfae;
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 4rem;
+  }
+  a { color: var(--accent-ink); text-decoration-color: var(--border-strong); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: currentColor; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px;
+  }
+  code {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    padding: .12rem .35rem;
+    border-radius: 3px;
+    font-size: .88em;
+  }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+  /* ---------- letterhead ---------- */
+  .letterhead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.25rem;
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .72rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin: 0 0 .6rem;
+  }
+  h1 {
+    font-size: 1.85rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .tagline { color: var(--muted); margin: .5rem 0 0; max-width: 46ch; }
+  .seal {
+    flex: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: .7rem .85rem;
+    text-align: right;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .seal-status {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .4rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: .45rem;
+    white-space: nowrap;
+  }
+  .seal-status svg { flex: none; }
+  .fingerprint {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .74rem;
+    color: var(--muted);
+    letter-spacing: .02em;
+    white-space: nowrap;
+  }
+
+  h2 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 2.75rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+  h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  section:first-of-type h2 { margin-top: 0; }
+
+  p { margin: 0 0 1rem; }
+  .lede { color: var(--muted); }
+
+  /* ---------- manifest (tool list) ---------- */
+  .manifest { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+  .manifest-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .15rem 1rem;
+    padding: .95rem 1.1rem;
+  }
+  .manifest-row + .manifest-row { border-top: 1px solid var(--border); }
+  .manifest-name {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 600;
+    font-size: .95rem;
+  }
+  .manifest-name a { color: var(--ink); text-decoration: none; }
+  .manifest-name a:hover { color: var(--accent-ink); }
+  .manifest-desc { grid-column: 1 / -1; color: var(--muted); font-size: .92rem; }
+  .manifest-link {
+    align-self: start;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .78rem;
+    white-space: nowrap;
+  }
+
+  /* ---------- signing keys ---------- */
+  .keylist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
+  .keylist li {
+    display: flex;
+    align-items: baseline;
+    gap: .6rem;
+    font-size: .92rem;
+  }
+  .keylist .tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: .15rem .4rem;
+  }
+
+  /* ---------- install cards ---------- */
+  .install-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.15rem;
+    overflow: hidden;
+  }
+  .install-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .85rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .install-title { font-weight: 600; font-size: .95rem; }
+  .install-sub { font-family: "IBM Plex Mono", monospace; font-size: .74rem; color: var(--muted); }
+
+  .term { position: relative; background: var(--code-bg); }
+  .term pre {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .84rem;
+    line-height: 1.65;
+    color: var(--code-fg);
+  }
+  .term .comment { color: var(--code-muted); }
+  .copy-btn {
+    position: absolute;
+    top: .55rem;
+    right: .6rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .68rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--code-muted);
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 5px;
+    padding: .25rem .55rem;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+  .copy-btn:hover { color: var(--code-fg); border-color: rgba(255,255,255,.3); }
+
+  .note {
+    display: flex;
+    gap: .65rem;
+    font-size: .87rem;
+    color: var(--muted);
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .8rem .95rem;
+    margin: .9rem 0 0;
+  }
+  .note svg { flex: none; margin-top: .15rem; color: var(--accent); }
+  .note strong { color: var(--ink); }
+  .note code { background: rgba(0,0,0,.06); }
+  :root:not([data-theme="light"]) .note code,
+  :root[data-theme="dark"] .note code { background: rgba(255,255,255,.08); }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .87rem;
+  }
+
+  @media (max-width: 520px) {
+    .letterhead { flex-direction: column; }
+    .seal { align-self: stretch; text-align: left; }
+    .seal-status { justify-content: flex-start; }
+  }
 </style>
 </head>
 <body>
-<h1>TomTonic package repository</h1>
-<p>Signed <code>apt</code>/<code>dnf</code>/<code>zypper</code>/<code>pacman</code>/<code>apk</code> repository
-for the <a href="https://github.com/TomTonic">TomTonic</a> command-line tools.</p>
 
-<p class="muted">This page and the package indices below are rebuilt automatically by a
+<div class="letterhead">
+  <div>
+    <p class="eyebrow">Signed package repository</p>
+    <h1>TomTonic package repository</h1>
+    <p class="tagline">One <code>apt</code>/<code>dnf</code>/<code>zypper</code>/<code>pacman</code>/<code>apk</code>
+    source for the <a href="https://github.com/TomTonic">TomTonic</a> command-line tools.</p>
+  </div>
+  <div class="seal">
+    <p class="seal-status">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M5 8.3 7 10.3 11 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      GPG signed
+    </p>
+    <p class="fingerprint">AA9C 6D63 B7B6 C0BC 18A8<br>9693 E372 5F71 EDDA EC03</p>
+  </div>
+</div>
+
+<p class="lede">This page and every index below are rebuilt automatically by a
 <a href="https://github.com/TomTonic/pkg-repo/actions">GitHub Actions workflow</a> in
 <a href="https://github.com/TomTonic/pkg-repo">TomTonic/pkg-repo</a>, pulling signed release
-assets directly from each tool's own GitHub repository. Nothing here is hand-uploaded.</p>
+assets straight from each tool's own GitHub repository. Nothing here is hand-uploaded.</p>
 
+<section>
 <h2>Currently served tools</h2>
-<ul>
-  <li><a href="https://github.com/TomTonic/extract-sbom">extract-sbom</a> &mdash;
-      standardized incoming inspection for software deliveries (SBOM + audit report)</li>
-  <li><a href="https://github.com/TomTonic/prune_backups">prune_backups</a> &mdash;
-      prune incremental backup directories on a retention schedule</li>
-</ul>
+<div class="manifest">
+  <div class="manifest-row">
+    <span class="manifest-name"><a href="https://github.com/TomTonic/extract-sbom">extract-sbom</a></span>
+    <span class="manifest-link"><a href="https://github.com/TomTonic/extract-sbom">github &rarr;</a></span>
+    <span class="manifest-desc">Standardized incoming inspection for software deliveries &mdash; produces an SBOM plus an auditable report.</span>
+  </div>
+  <div class="manifest-row">
+    <span class="manifest-name"><a href="https://github.com/TomTonic/prune_backups">prune_backups</a></span>
+    <span class="manifest-link"><a href="https://github.com/TomTonic/prune_backups">github &rarr;</a></span>
+    <span class="manifest-desc">Prunes incremental backup directories on an hourly/daily/monthly retention schedule.</span>
+  </div>
+</div>
+</section>
 
+<section>
 <h2>Signing keys</h2>
-<p>apt/rpm/pacman are all signed with the same GPG key; apk uses Alpine's own RSA key format.</p>
-<p class="fingerprint">GPG: AA9C 6D63 B7B6 C0BC 18A8&nbsp;&nbsp;9693 E372 5F71 EDDA EC03</p>
-<ul>
-  <li><a href="pubkey.gpg">pubkey.gpg</a> (apt/rpm/pacman)</li>
-  <li><a href="alpine/tomtonic.rsa.pub">alpine/tomtonic.rsa.pub</a> (apk)</li>
+<p>apt, rpm and pacman indices are all signed with the same GPG key; apk uses Alpine's own RSA key format.</p>
+<ul class="keylist">
+  <li><span class="tag">apt / rpm / pacman</span> <a href="pubkey.gpg">pubkey.gpg</a></li>
+  <li><span class="tag">apk</span> <a href="alpine/tomtonic.rsa.pub">alpine/tomtonic.rsa.pub</a></li>
 </ul>
+</section>
 
+<section>
 <h2>Debian / Ubuntu and derivatives</h2>
-<pre>curl -fsSL https://pkg.tomtonic.de/pubkey.gpg | sudo tee /etc/apt/keyrings/tomtonic.asc
-echo "deb [signed-by=/etc/apt/keyrings/tomtonic.asc] https://pkg.tomtonic.de/apt stable main" | \
+<div class="install-card">
+  <div class="install-head">
+    <span class="install-title">apt</span>
+    <span class="install-sub">amd64 &middot; arm64</span>
+  </div>
+  <div class="term">
+    <button class="copy-btn" type="button" data-copy="apt">Copy</button>
+    <pre id="apt">sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://pkg.tomtonic.de/pubkey.gpg | sudo tee /etc/apt/keyrings/tomtonic.gpg >/dev/null
+echo "deb [signed-by=/etc/apt/keyrings/tomtonic.gpg] https://pkg.tomtonic.de/apt stable main" | \
   sudo tee /etc/apt/sources.list.d/tomtonic.list
-sudo apt update && sudo apt install prune_backups</pre>
+sudo apt update && sudo apt install extract-sbom</pre>
+  </div>
+</div>
+<div class="note">
+  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6.3v3.4M8 11.9v.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+  <span>The keyring file must end in <code>.gpg</code>, not <code>.asc</code>. <code>apt</code>'s
+  internal signature check treats any <code>.asc</code>-named keyring as ASCII-armored and tries to
+  re-armor this (already binary) key &mdash; that silently produces an empty keyring and breaks
+  verification on every architecture, amd64 included, not just arm64.</span>
+</div>
+</section>
 
+<section>
 <h2>Fedora / RHEL / CentOS / Rocky / Alma / openSUSE</h2>
-<pre>sudo curl -fsSL -o /etc/yum.repos.d/tomtonic.repo https://pkg.tomtonic.de/rpm/tomtonic.repo
-sudo dnf install prune_backups   # or: sudo zypper install prune_backups</pre>
+<div class="install-card">
+  <div class="install-head">
+    <span class="install-title">dnf / zypper</span>
+    <span class="install-sub">x86_64 &middot; aarch64</span>
+  </div>
+  <div class="term">
+    <button class="copy-btn" type="button" data-copy="rpm">Copy</button>
+    <pre id="rpm">sudo curl -fsSL -o /etc/yum.repos.d/tomtonic.repo https://pkg.tomtonic.de/rpm/tomtonic.repo
+sudo dnf install extract-sbom   <span class="comment"># or: sudo zypper install extract-sbom</span></pre>
+  </div>
+</div>
+</section>
 
+<section>
 <h2>Arch Linux and derivatives</h2>
-<pre># add to /etc/pacman.conf:
+<div class="install-card">
+  <div class="install-head">
+    <span class="install-title">pacman</span>
+    <span class="install-sub">x86_64 &middot; aarch64</span>
+  </div>
+  <div class="term">
+    <button class="copy-btn" type="button" data-copy="pacman">Copy</button>
+    <pre id="pacman"><span class="comment"># add to /etc/pacman.conf:
 #   [tomtonic]
 #   SigLevel = Optional TrustedOnly DatabaseRequired
-#   Server = https://pkg.tomtonic.de/pacman/$arch
+#   Server = https://pkg.tomtonic.de/pacman/$arch</span>
 curl -fsSL https://pkg.tomtonic.de/pubkey.gpg | sudo pacman-key --add -
 sudo pacman-key --lsign-key AA9C6D63B7B6C0BC18A89693E3725F71EDDAEC03
-sudo pacman -Sy prune_backups</pre>
+sudo pacman -Sy extract-sbom</pre>
+  </div>
+</div>
+</section>
 
+<section>
 <h2>Alpine</h2>
-<pre>sudo curl -fsSL -o /etc/apk/keys/tomtonic.rsa.pub https://pkg.tomtonic.de/alpine/tomtonic.rsa.pub
+<div class="install-card">
+  <div class="install-head">
+    <span class="install-title">apk</span>
+    <span class="install-sub">x86_64 &middot; aarch64</span>
+  </div>
+  <div class="term">
+    <button class="copy-btn" type="button" data-copy="apk">Copy</button>
+    <pre id="apk">sudo curl -fsSL -o /etc/apk/keys/tomtonic.rsa.pub https://pkg.tomtonic.de/alpine/tomtonic.rsa.pub
 echo "https://pkg.tomtonic.de/apk" | sudo tee -a /etc/apk/repositories
-sudo apk update && sudo apk add prune_backups</pre>
+sudo apk update && sudo apk add extract-sbom</pre>
+  </div>
+</div>
+</section>
 
-<p class="muted">Source, build scripts and signing rationale:
-<a href="https://github.com/TomTonic/pkg-repo">github.com/TomTonic/pkg-repo</a></p>
+<p class="lede" style="margin-top: 2rem;">Swap <code>extract-sbom</code> for <code>prune_backups</code>
+(or any other package this repository serves) in any command above &mdash; the setup steps are identical.</p>
+
+<footer>
+  Source, build scripts and signing rationale:
+  <a href="https://github.com/TomTonic/pkg-repo">github.com/TomTonic/pkg-repo</a>
+</footer>
+
+<script>
+  document.querySelectorAll(".copy-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var target = document.getElementById(btn.getAttribute("data-copy"));
+      var text = target.innerText;
+      navigator.clipboard.writeText(text).then(function () {
+        var original = btn.textContent;
+        btn.textContent = "Copied";
+        setTimeout(function () { btn.textContent = original; }, 1500);
+      }).catch(function () {});
+    });
+  });
+</script>
 </body>
 </html>

@@ -40,24 +40,24 @@ jq -c '.tools[]' manifest.json | while read -r tool; do
         ;;
       *.rpm)
         arch=""
-        [[ "$name" == *x86_64* ]] && arch=x86_64
-        [[ "$name" == *aarch64* ]] && arch=aarch64
+        [[ "$name" == *x86_64* || "$name" == *amd64* ]] && arch=x86_64
+        [[ "$name" == *aarch64* || "$name" == *arm64* ]] && arch=aarch64
         [[ -z "$arch" ]] && continue
         echo "    -> rpm/$arch/$name"
         curl -fsSL -o "$WORK/pools/rpm/$arch/$name" "$url"
         ;;
       *.pkg.tar.zst)
         arch=""
-        [[ "$name" == *x86_64* ]] && arch=x86_64
-        [[ "$name" == *aarch64* ]] && arch=aarch64
+        [[ "$name" == *x86_64* || "$name" == *amd64* ]] && arch=x86_64
+        [[ "$name" == *aarch64* || "$name" == *arm64* ]] && arch=aarch64
         [[ -z "$arch" ]] && continue
         echo "    -> pacman/$arch/$name"
         curl -fsSL -o "$WORK/pools/pacman/$arch/$name" "$url"
         ;;
       *.apk)
         arch=""
-        [[ "$name" == *x86_64* ]] && arch=x86_64
-        [[ "$name" == *aarch64* ]] && arch=aarch64
+        [[ "$name" == *x86_64* || "$name" == *amd64* ]] && arch=x86_64
+        [[ "$name" == *aarch64* || "$name" == *arm64* ]] && arch=aarch64
         [[ -z "$arch" ]] && continue
         # Alpine requires the exact filename "<package>-<version>.apk"
         # (no arch suffix - files already live in a per-arch directory);
